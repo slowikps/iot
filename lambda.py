@@ -228,19 +228,56 @@ def lambda_handler(request, context):
 
 # v2 handlers
 def handle_discovery():
-    header = {
-        "namespace": "Alexa.ConnectedHome.Discovery",
-        "name": "DiscoverAppliancesResponse",
-        "payloadVersion": "2",
-        "messageId": get_uuid()
-    }
-    payload = {
-        "discoveredAppliances": SAMPLE_APPLIANCES
-    }
     response = {
-        "header": header,
-        "payload": payload
+            "event":
+                {
+                    "header":
+                    {
+                        "correlationToken": "12345692749237492",
+                        "namespace": "Alexa.Discovery",
+                        "name": "Discover.Response",
+                        "payloadVersion": "3",
+                        "messageId": get_uuid()
+                    },
+            "payload":
+                {
+                "endpoints":[
+                        {
+                          "endpointId": "your_custom_endpoint",
+                          "manufacturerName": "Manufacturer 1234",
+                          "friendlyName": "Your Light Name",
+                          "description": "Smart Device Switch",
+                          "displayCategories": ["SWITCH"],
+                          "cookie": {
+                            "key1": "arbitrary key/value pairs for skill to reference this endpoint.",
+                          },
+                          "capabilities": [
+                            {
+                              "type": "AlexaInterface",
+                              "interface": "Alexa",
+                              "version": "3"
+                            },
+                            {
+                              "interface": "Alexa.PowerController",
+                              "version": "3",
+                              "type": "AlexaInterface",
+                              "properties": {
+                                "supported": [
+                                  {
+                                    "name": "powerState"
+                                  }
+                                ],
+                                "proactivelyReported": True,
+                                "retrievable": True
+                              }
+                            }
+                        ]
+                    }
+                ]
+            }
+        }  
     }
+    logger.info("Response: " +json.dumps(response))
     return response
 
 def handle_non_discovery(request):
